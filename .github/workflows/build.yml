@@ -19,8 +19,20 @@ jobs:
         with:
           node-version: '12.x'
         run: npm ci
+
+      - name: Run Test
         run: npm test:prod
+
+      - name: Run Build
         run: npm build
+
+      - name: Create project tar
+        run: npm pack
+
+      - name: Release upload
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/
 
   # Publish release on push to master
   release-master:
@@ -42,11 +54,20 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: release/**/*
-          tag_name: ${{steps.version_check.outputs.releaseVersion}}
+          tag_name: ${{ steps.version_check.outputs.releaseVersion }}
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload Release Asset
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.version_check.outputs.releaseVersion }}
+            asset_path: ./my-artifact.zip
+            asset_name: my-artifact.zip
+            asset_content_type: application/zip
 
   release-staging:
     if: github.ref == 'refs/heads/staging'
@@ -72,3 +93,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.version_check.outputs.releaseVersion }}
+          asset_path: ./juno-node-linux-v${releaseVersion}.zip
+          asset_name: juno-node-linux-v${releaseVersion}.zip
+          asset_content_type: application/zip
