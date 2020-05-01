@@ -29,11 +29,6 @@ jobs:
       - name: Create project tar
         run: npm pack
 
-      - name: Release upload
-        uses: softprops/action-gh-release@v1
-        with:
-          files: release/
-
   # Publish release on push to master
   release-master:
     if: github.ref == 'refs/heads/master'
@@ -65,8 +60,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.version_check.outputs.releaseVersion }}
-          asset_path: ./my-artifact.zip
-          asset_name: my-artifact.zip
+          asset_path: ./juno-node-linux-v${releaseVersion}.zip
+          asset_name: juno-node-linux-v${releaseVersion}.zip
           asset_content_type: application/zip
 
   release-staging:
@@ -99,6 +94,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.version_check.outputs.releaseVersion }}
-          asset_path: ./juno-node-linux-v${releaseVersion}.zip
-          asset_name: juno-node-linux-v${releaseVersion}.zip
+          asset_path: ./juno-node-linux-v${releaseVersion}-beta.zip
+          asset_name: juno-node-linux-v${releaseVersion}-beta.zip
           asset_content_type: application/zip
