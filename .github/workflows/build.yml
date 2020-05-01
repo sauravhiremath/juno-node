@@ -36,6 +36,7 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v2
+
       - run: git fetch --all --tags
 
       - name: Check Release Version
